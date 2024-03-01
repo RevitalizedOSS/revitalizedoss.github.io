@@ -1,0 +1,35 @@
+# Deploy to GitHub Pages
+name: Deploy to GitHub Pages
+on:
+  push:
+    branches:
+      - master
+
+permissions:
+  contents: read
+  pages: write
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+           
+            # We don't have a build, just upload the files
+            - name: Upload
+              uses: actions/upload-artifact@v4
+              with:
+                  name: github-pages
+                  path: .
+    deploy:
+        needs: build
+        runs-on: ubuntu-latest
+        environment: 
+            name: github-pages
+            url: ${{ steps.deployment.outputs.page_url }}
+        steps:
+            - name: Deploy
+              id: deployment
+              uses: actions/deploy-pages@v4
+        
